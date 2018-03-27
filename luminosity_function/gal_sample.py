@@ -12,7 +12,7 @@ import scipy.stats
 from astropy.cosmology import FlatLambdaCDM
 from astropy.table import Table, join
 
-import util
+from .util  import ran_fun
 
 # Global parameters
 gama_data = os.environ['GAMA_DATA']
@@ -42,11 +42,16 @@ comp_tab = (1.0, 1.0, 0.99, 0.97, 0.98, 0.98, 0.98, 0.97, 0.96, 0.96,
 metadata_conflicts = 'silent'  # Alternatives are 'warn', 'error'
 
 
+
 class CosmoLookup():
     """Distance and volume-element lookup tables.
     NB volume element is differential per unit solid angle."""
 
-    def __init__(self, H0, omega_l, zlimits, nz=1000):
+    def __init__(self, 
+                 H0= 100., 
+                 omega_l = 0.7, 
+                 zlimits = [0.,6.], 
+                 nz=10000):
         cosmo = FlatLambdaCDM(H0=H0, Om0=1-omega_l)
         self._zrange = zlimits
         self._z = np.linspace(zlimits[0], zlimits[1], nz)
@@ -73,6 +78,8 @@ class CosmoLookup():
     def dist_mod(self, z):
         """Distance modulus."""
         return np.interp(z, self._z, self._dist_mod)
+
+
 
 
 class GalSample():
@@ -483,7 +490,7 @@ class GalSample():
         j = 0
         for i in range(ngal):
             ndup = ndupe[i]
-            zran[j:j+ndup] = util.ran_fun(
+            zran[j:j+ndup] = ran_fun(
                     self.vol_ev, self.t['zlo'][i], self.t['zhi'][i], ndup)
             j += ndup
         return zran

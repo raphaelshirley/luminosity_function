@@ -1,0 +1,6 @@
+astropy
+click
+pymoc
+pyvo
+sqlalchemy
+scipy
